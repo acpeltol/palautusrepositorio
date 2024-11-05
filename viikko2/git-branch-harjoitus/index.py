@@ -10,8 +10,8 @@ logger("aloitetaan ohjelma")
 x = int(input("luku 1: "))
 y = int(input("luku 2: "))
 
-print(f"{summa(x, y)}")
-print(f"{erotus(x, y)}")
-print(f"{tulo(x,y)}")
+print(f"{summa(x, y)} on lukujen x ja y summa")
+print(f"{erotus(x, y)} on luku x ja y erotus")
+print(f"{tulo(x,y)} on lukujen x ja y tulo")
 
 logger("lopetetaan")
