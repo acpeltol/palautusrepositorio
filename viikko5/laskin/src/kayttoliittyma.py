@@ -8,11 +8,74 @@ class Komento(Enum):
     NOLLAUS = 3
     KUMOA = 4
 
+class Summa():
+    def __init__(self,sovelluslogiikka, syöte):
+        self.logiikka = sovelluslogiikka
+        self.syöte = syöte
+
+        self.kumous_arvo = 0
+    
+    def suorita(self):
+        self.kumous = self.logiikka.arvo()
+        self.logiikka.plus(int(self.syöte()))
+
+    def kumoa(self):
+        self.logiikka.aseta_arvo(self.kumous)
+    
+
+class Erotus():
+    def __init__(self,sovelluslogiikka, syöte):
+        self.logiikka = sovelluslogiikka
+        self.syöte = syöte
+
+        self.kumous_arvo = 0
+
+    def suorita(self):
+        self.kumous = self.logiikka.arvo()
+        self.logiikka.miinus(int(self.syöte()))
+
+    def kumoa(self):
+        self.logiikka.aseta_arvo(self.kumous)
+
+class Nollaus():
+    def __init__(self,sovelluslogiikka, syöte):
+        self.logiikka = sovelluslogiikka
+        self.syöte = syöte
+
+        self.kumous_arvo = 0
+    def suorita(self):
+        self.kumous = self.logiikka.arvo()
+        self.logiikka.nollaa()
+    def kumoa(self):
+        self.logiikka.aseta_arvo(self.kumous)
+
+class Kumoa():
+    def __init__(self,sovelluslogiikka, syöte):
+        self.logiikka = sovelluslogiikka
+        self.kumoa_luokka = None
+    def suorita(self):
+        return self.kumoa_luokka
+        #self.logiikka.aseta_arvo(self.kumous)
+    def viimeinen_kumous(self,arvo):
+        self.kumoa_luokka = arvo
 
 class Kayttoliittyma:
     def __init__(self, sovelluslogiikka, root):
         self._sovelluslogiikka = sovelluslogiikka
         self._root = root
+
+        self._komennot = {
+            Komento.SUMMA: Summa(sovelluslogiikka, self._lue_syote),
+            Komento.EROTUS: Erotus(sovelluslogiikka, self._lue_syote),
+            Komento.NOLLAUS: Nollaus(sovelluslogiikka, self._lue_syote),
+            Komento.KUMOA: Kumoa(sovelluslogiikka, self._lue_syote)
+        }
+
+    
+
+    def _lue_syote(self):
+        return self._syote_kentta.get()
+
 
     def kaynnista(self):
         self._arvo_var = StringVar()
@@ -62,16 +125,17 @@ class Kayttoliittyma:
         except Exception:
             pass
 
-        if komento == Komento.SUMMA:
-            self._sovelluslogiikka.plus(arvo)
-        elif komento == Komento.EROTUS:
-            self._sovelluslogiikka.miinus(arvo)
-        elif komento == Komento.NOLLAUS:
-            self._sovelluslogiikka.nollaa()
-        elif komento == Komento.KUMOA:
-            pass
-
-        self._kumoa_painike["state"] = constants.NORMAL
+    
+        if komento != Komento.KUMOA:
+            self._komennot[Komento.KUMOA].viimeinen_kumous(komento)
+            komento_olio = self._komennot[komento]
+            komento_olio.suorita()
+            self._kumoa_painike["state"] = constants.NORMAL
+        else:
+            gate = self._komennot[Komento.KUMOA].suorita()
+            komento_olio = self._komennot[gate]
+            komento_olio.kumoa()
+            self._kumoa_painike["state"] = constants.DISABLED
 
         if self._sovelluslogiikka.arvo() == 0:
             self._nollaus_painike["state"] = constants.DISABLED

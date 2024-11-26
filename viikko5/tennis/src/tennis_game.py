@@ -6,50 +6,70 @@ class TennisGame:
         self.m_score2 = 0
 
     def won_point(self, player_name):
-        if player_name == "player1":
-            self.m_score1 = self.m_score1 + 1
+
+        if player_name == self.player1_name:
+            self.m_score1 += 1
         else:
-            self.m_score2 = self.m_score2 + 1
+            self.m_score2 += 1
+
+
+    def tie_score_text(self,score):
+
+        return_text = ["Love-All","Fifteen-All", "Thirty-All","Deuce"]
+
+        try:
+            score = return_text[self.m_score1]
+        except:
+            score = return_text[-1]
+
+        return score
+    
+    def score_is_more_than_four_text(self, score):
+        diffrence = self.m_score1 - self. m_score2
+
+        return_text = ["Advantage player1","Win for player1","Win for player2","Advantage player2"]
+
+        if diffrence == 1:
+            score = return_text[diffrence - 1]
+        elif diffrence == -1:
+            score = return_text[diffrence]
+        elif diffrence >= 2:
+            score = return_text[1]
+        else:
+            score = return_text[2]
+
+        return score
+    
+    def else_score_text(self,score,temp_score):
+
+        return_texts = ["Love","Fifteen", "Thirty", "Forty"]
+
+        temp_score = self.m_score1
+
+        score += return_texts[temp_score]     
+        score += "-"
+
+        temp_score = self.m_score2
+
+        score += return_texts[temp_score]
+
+        return score
 
     def get_score(self):
         score = ""
         temp_score = 0
 
         if self.m_score1 == self.m_score2:
-            if self.m_score1 == 0:
-                score = "Love-All"
-            elif self.m_score1 == 1:
-                score = "Fifteen-All"
-            elif self.m_score1 == 2:
-                score = "Thirty-All"
-            else:
-                score = "Deuce"
+            
+            score = self.tie_score_text(score)
+
         elif self.m_score1 >= 4 or self.m_score2 >= 4:
-            minus_result = self.m_score1 - self. m_score2
+            
+            score = self.score_is_more_than_four_text(score)
 
-            if minus_result == 1:
-                score = "Advantage player1"
-            elif minus_result == -1:
-                score = "Advantage player2"
-            elif minus_result >= 2:
-                score = "Win for player1"
-            else:
-                score = "Win for player2"
         else:
-            for i in range(1, 3):
-                if i == 1:
-                    temp_score = self.m_score1
-                else:
-                    score = score + "-"
-                    temp_score = self.m_score2
+            
+            score = self.else_score_text(score, temp_score)
 
-                if temp_score == 0:
-                    score = score + "Love"
-                elif temp_score == 1:
-                    score = score + "Fifteen"
-                elif temp_score == 2:
-                    score = score + "Thirty"
-                elif temp_score == 3:
-                    score = score + "Forty"
 
         return score
